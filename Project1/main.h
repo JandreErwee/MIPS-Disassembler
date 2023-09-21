@@ -48,3 +48,4 @@ vector<string> immediateValue(vector<string> input);
 
 vector<string> instructionFormat(vector<string> input);
 string signExtend(string immediateAmount);
+
