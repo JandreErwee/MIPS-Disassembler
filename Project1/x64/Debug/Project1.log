@@ -1,2 +1,37 @@
 ﻿  main.cpp
+C:\Users\Jandre Erwee\source\repos\MIPS-Disassembler\Project1\main.cpp(118,20): warning C4244: 'argument': conversion from '__int64' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Jandre Erwee\source\repos\MIPS-Disassembler\Project1\main.cpp(137,20): warning C4244: 'argument': conversion from '__int64' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Jandre Erwee\source\repos\MIPS-Disassembler\Project1\main.cpp(156,20): warning C4244: 'argument': conversion from '__int64' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Jandre Erwee\source\repos\MIPS-Disassembler\Project1\main.cpp(166,20): warning C4244: 'argument': conversion from '__int64' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Jandre Erwee\source\repos\MIPS-Disassembler\Project1\main.cpp(176,20): warning C4244: 'argument': conversion from '__int64' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Jandre Erwee\source\repos\MIPS-Disassembler\Project1\main.cpp(186,20): warning C4244: 'argument': conversion from '__int64' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Jandre Erwee\source\repos\MIPS-Disassembler\Project1\main.cpp(196,20): warning C4244: 'argument': conversion from '__int64' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
   Project1.vcxproj -> C:\Users\Jandre Erwee\source\repos\MIPS-Disassembler\x64\Debug\Project1.exe

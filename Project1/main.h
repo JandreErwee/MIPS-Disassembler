@@ -47,3 +47,4 @@ vector<int> funct(vector<string> input);
 vector<string> immediateValue(vector<string> input);
 
 vector<string> instructionFormat(vector<string> input);
+string signExtend(string immediateAmount);
