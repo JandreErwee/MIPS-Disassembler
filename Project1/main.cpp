@@ -39,7 +39,7 @@ int main() {
 	vector<int> destinationCodes = destinationRegister(binaryInstruction);
 	vector<int> shiftCodes = shamt(binaryInstruction);
 	vector<int> functionCodes = funct(binaryInstruction);
-	vector<int> immediateCodes = immediateValue(binaryInstruction);
+	vector<string> immediateCodes = immediateValue(binaryInstruction);
 	vector<string> format = instructionFormat(opCodes);
 
 	string assembeledInstructions;
@@ -64,8 +64,33 @@ int main() {
 			}
 		}
 		else {
-			int immediateIndex = immediateCodes[i];
-			string immediateAmount = to_string(immediateIndex);
+			
+			int opCodeIndex = stoi(opCodes[i], nullptr, 2);
+			string operation = immediateInstructions[opCodeIndex];
+			string SignExtension;
+			string immediateAmount = immediateCodes[i];
+			if (opCodes[i] != "000100" || "000101" || "101000" || "101001" || "101011" || "111000") {  //checks if the operation requires Sign Extension
+				if (immediateAmount.at(0) == '0') {
+					string immediateValue = "0000000000000000" + immediateAmount; //Fills zeros
+					//converts to decimal number
+					int dec = stoi(immediateValue, nullptr, 2);
+					//converts to a string for output
+					SignExtension = to_string(dec);
+				}
+				else { 
+					string immediateValue = "1111111111111111" + immediateAmount;  //Fills ones
+					// Converts to a negative decimal number
+					bitset<32> immediateBinary(immediateValue);
+					immediateBinary = ~immediateBinary;
+					immediateValue = immediateBinary.to_string();
+					int dec = stoi(immediateValue, nullptr, 2);
+					dec = -1 * (dec + 1);
+					//converts to a string for output
+					SignExtension = to_string(dec);
+				}
+
+				assembeledInstructions = operation + ", " + rt + ", " + rs + ", " + SignExtension;
+			}
 
 		}
 		cout << assembeledInstructions << "\n";
@@ -162,12 +187,11 @@ vector<int> funct(vector<string> input) {
 	return output;
 }
 
-vector<int> immediateValue(vector<string> input) {
-	vector<int> output;
+vector<string> immediateValue(vector<string> input) {
+	vector<string> output;
 	for (int j = 0; j < input.size(); j++) {
 		string temp = input[j].substr(16, 16);
-		int dec = stoi(temp, nullptr, 2);
-		output.push_back(dec);
+		output.push_back(temp);
 	}
 	return output;
 }

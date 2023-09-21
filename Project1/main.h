@@ -44,6 +44,6 @@ vector<int> transferRegister(vector<string> input);
 vector<int> destinationRegister(vector<string> input);
 vector<int> shamt(vector<string> input);
 vector<int> funct(vector<string> input);
-vector<int> immediateValue(vector<string> input);
+vector<string> immediateValue(vector<string> input);
 
 vector<string> instructionFormat(vector<string> input);
