@@ -43,12 +43,23 @@ int main() {
 	vector<string> format = instructionFormat(opCodes);
 
 	vector<string> labels;
+	vector<int> labelFlag;
 	for (int i = 0; i < opCodes.size(); i++) {
 		if ((opCodes[i] == "000100") || (opCodes[i] == "000101")) {
 			string SignExtension = signExtend(immediateCodes[i]);
+			int offset =stoll(SignExtension, nullptr, 10);
+			//cout << "Current Index: " << i << " Offset: " << SignExtension << "\n";
+			int labelCheck = i + 1 + offset;
+			//cout << "Label created at " << labelCheck << "\n";
+			labelFlag.push_back(labelCheck);
+			offset = offset * 4;
+			int address = 4 * (i + 1) + offset;
+			labels.push_back(to_string(address));
 		}
 	}
-	
+	labels.push_back("NULL"); //adds a defined last value int the labels vector
+	labelFlag.push_back(-1);
+	int labelcounter = 0;
 
 	string assembeledInstructions;
 	for (int i = 0; i < opCodes.size(); i++) {
@@ -57,7 +68,14 @@ int main() {
 		int transferIndex = transferCodes[i];
 		string rt = registerList[transferIndex];
 
-		if (format[i] == "r") {
+		if (find(labelFlag.begin(), labelFlag.end(), i) != labelFlag.end()) {
+			int locationLabel = find(labelFlag.begin(), labelFlag.end(), i );
+			assembeledInstructions = "Addr_" + labels[labelcounter];
+			labelcounter++;
+			cout << assembeledInstructions << "\n";
+
+		} 
+			if (format[i] == "r") {
 			int functionIndex = functionCodes[i];
 			string command = registerInstructions[functionIndex];
 			int destinationIndex = destinationCodes[i];
@@ -77,11 +95,11 @@ int main() {
 			string operation = immediateInstructions[opCodeIndex];
 			if ((opCodes[i] == "001000") || (opCodes[i] == "001001") || (opCodes[i] == "001010") || (opCodes[i] == "001011") || (opCodes[i] == "001100") || (opCodes[i] == "001101")) {  //checks if the operation requires Sign Extension and has normal form
 				string SignExtension = signExtend(immediateCodes[i]); 
-				assembeledInstructions = operation + ", " + rt + ", " + rs + ", " + SignExtension;
+				assembeledInstructions =operation + ", " + rt + ", " + rs + ", " + SignExtension;
 			}
 			else if ((opCodes[i] == "100011") || (opCodes[i] == "101011") || (opCodes[i] == "100100") || (opCodes[i] == "100101") || (opCodes[i] == "110000") || (opCodes[i] == "101000") || (opCodes[i] == "101000") || (opCodes[i] == "111000")) { //checks if it is a load word or store word operation
 				string SignExtension = signExtend(immediateCodes[i]);
-				assembeledInstructions = operation + ", " + rt + ", " + SignExtension + "(" + rs + ")";
+				assembeledInstructions =operation + ", " + rt + ", " + SignExtension + "(" + rs + ")";
 			}
 			else if (opCodes[i] == "01111") {
 				string SignExtension = signExtend(immediateCodes[i]);
