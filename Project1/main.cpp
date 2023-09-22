@@ -17,7 +17,6 @@ int main() {
 		cout << "ERROR: File could not be found";
 		return -1;
 	}
-
 	string line;
 	vector<string> hexInstruction;
 	
@@ -42,6 +41,17 @@ int main() {
 	vector<string> immediateCodes = immediateValue(binaryInstruction);
 	vector<string> format = instructionFormat(opCodes);
 
+	//checks for any error before compiling
+	for (int i = 0; i < opCodes.size(); i++) {
+		bitset<6> bits(opCodes[i]);
+		int opCodeIndex = bits.to_ulong();
+		string operation = immediateInstructions[opCodeIndex];
+		if ((operation == "NULL") || (hexInstruction[i].length() != 8)) {
+			cout << "ERROR: Cannot disassemble 0x" << hexInstruction[i] << " at line " << i << "\n";
+			return -1;
+		}
+	}
+
 	string labels[100];
 	vector<int> labelFlag;
 	for (int i = 0; i < opCodes.size(); i++) {
@@ -59,6 +69,12 @@ int main() {
 	}
 	labelFlag.push_back(-1);
 
+	//creates and output file with a name that matches the input file
+	string outfile = fileLocation.substr(0, fileLocation.length()-4);
+	ofstream outputFile(outfile + ".s");
+
+
+
 	string assembeledInstructions;
 	for (int i = 0; i < opCodes.size(); i++) {
 		int sourceIndex = sourceCodes[i];
@@ -69,6 +85,7 @@ int main() {
 		if (find(labelFlag.begin(), labelFlag.end(), i) != labelFlag.end()) {
 			int jumpAddress = stoll(labels[i],nullptr,10);
 			cout << "Addr_" << hex << setfill('0') << setw(4) << jumpAddress << ": " << "\n";
+			outputFile << "Addr_" << hex << setfill('0') << setw(4) << jumpAddress << ": " << "\n";
 
 		} 
 			if (format[i] == "r") {
@@ -79,12 +96,16 @@ int main() {
 			int shiftIndex = shiftCodes[i];
 			string shiftAmount = to_string(shiftIndex);
 			if (shiftIndex != 0) {
-				assembeledInstructions = "\t" + command + " " + rd + ", " + rt + ", " + shiftAmount;
+				assembeledInstructions = "\t" + command + "\t" + rd + ", " + rt + ", " + shiftAmount;
 				cout << assembeledInstructions << "\n";
+				outputFile << assembeledInstructions << "\n";
+
 			}
 			else {
-				assembeledInstructions = "\t" + command + " " + rd + ", " + rs + ", " + rt;
+				assembeledInstructions = "\t" + command + "\t" + rd + ", " + rs + ", " + rt;
 				cout << assembeledInstructions << "\n";
+				outputFile << assembeledInstructions << "\n";
+
 			}
 		}
 		else {
@@ -93,30 +114,35 @@ int main() {
 			string operation = immediateInstructions[opCodeIndex];
 			if ((opCodes[i] == "001000") || (opCodes[i] == "001001") || (opCodes[i] == "001010") || (opCodes[i] == "001011") || (opCodes[i] == "001100") || (opCodes[i] == "001101")) {  //checks if the operation requires Sign Extension and has normal form
 				string SignExtension = signExtend(immediateCodes[i]); 
-				assembeledInstructions = "\t" + operation + ", " + rt + ", " + rs + ", " + SignExtension;
+				assembeledInstructions = "\t" + operation + "\t" + rt + ", " + rs + ", " + SignExtension;
 				cout << assembeledInstructions << "\n";
+				outputFile << assembeledInstructions << "\n";
 			}
 			else if ((opCodes[i] == "100011") || (opCodes[i] == "101011") || (opCodes[i] == "100100") || (opCodes[i] == "100101") || (opCodes[i] == "110000") || (opCodes[i] == "101000") || (opCodes[i] == "101000") || (opCodes[i] == "111000")) { //checks if it is a load word or store word operation
 				string SignExtension = signExtend(immediateCodes[i]);
-				assembeledInstructions = "\t" + operation + ", " + rt + ", " + SignExtension + "(" + rs + ")";
+				assembeledInstructions = "\t" + operation + "\t" + rt + ", " + SignExtension + "(" + rs + ")";
 				cout << assembeledInstructions << "\n";
+				outputFile << assembeledInstructions << "\n";
 			}
 			else if (opCodes[i] == "01111") {
 				string SignExtension = signExtend(immediateCodes[i]);
-				assembeledInstructions = "\t" + operation + ", " + rt + ", " + SignExtension;
+				assembeledInstructions = "\t" + operation + "\t" + rt + ", " + SignExtension;
 				cout << assembeledInstructions << "\n";
+				outputFile << assembeledInstructions << "\n";
 			}
 			else if ((opCodes[i] == "000100") || (opCodes[i] == "000101")) {
 				string SignExtension = signExtend(immediateCodes[i]);
 				int offset = stoll(SignExtension, nullptr, 10);
 				offset = offset * 4;
 				int address = 4 * (i + 1) + offset;
-				cout << "\t" << operation << " " << rt << ", " << rs << ", " << "Addr_" << hex << setfill('0') << setw(4) << address << "\n";
+				cout << "\t" << operation << "\t" << rs << ", " << rt << ", " << "Addr_" << hex << setfill('0') << setw(4) << address << "\n";
+				outputFile << "\t" << operation << "\t" << rs << ", " << rt << ", " << "Addr_" << hex << setfill('0') << setw(4) << address << "\n";
+
 			}
 
 		}
 	}
-
+	cout << "Above Code was stored in file " << outfile << ".s";
 	return 0;  
 }
 
